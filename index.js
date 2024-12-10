@@ -122,14 +122,17 @@ app.get('/journals/:id', (req, res) => {
 
 // Create a new journal
 app.post('/journals', (req, res) => {
+    console.log('Incoming data:', req.body); // Log incoming request data
     const { userId, title, content, created_at } = req.body;
     connection.query(
         'INSERT INTO journals (userId, title, content, created_at) VALUES (?, ?, ?, ?)',
         [userId, title, content, created_at],
         (err, results) => {
             if (err) {
+                console.error('Error creating journal:', err); // Log error
                 res.status(500).send('Error creating journal.');
             } else {
+                console.log('Journal created successfully:', results.insertId); // Log success
                 res.status(201).send({ id: results.insertId });
             }
         }

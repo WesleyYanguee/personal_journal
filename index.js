@@ -146,7 +146,7 @@ app.post('/journals', (req, res) => {
 // Update a journal
 app.put('/journals', (req, res) => {
     const { id, userId, title, content, created_at } = req.body;
-    console.log('Update data:', req.body); // Log incoming data for debugging
+    console.log('Update journal data:', req.body); // Log incoming data
     connection.query(
         'UPDATE journals SET userId = ?, title = ?, content = ?, created_at = ? WHERE id = ?',
         [userId, title, content, created_at, id],
@@ -177,19 +177,29 @@ app.delete('/journals', (req, res) => {
 
 // Login Endpoint
 app.post('/login', (req, res) => {
+    console.log('Login payload:', req.body); // Debugging log
+
     const { username, password } = req.body;
-    console.log('Login attempt with:', username, password); // Debug log
+    if (!username || !password) {
+        return res.status(400).send({ message: 'Invalid payload' });
+    }
+
     connection.query(
         'SELECT * FROM users WHERE username = ? AND password = ?',
         [username, password],
         (err, results) => {
             if (err) {
-                console.error('Login error:', err); // Log any SQL error
-                res.status(500).send('Server error');
-            } else if (results.length === 0) {
-                res.status(401).send('Invalid credentials'); // No user found
+                console.error('Error during login:', err);
+                res.status(500).send({ message: 'Server error' });
+            } else if (results.length > 0) {
+                res.status(200).send({
+                    id: results[0].id,
+                    username: results[0].username,
+                    message: 'Login successful',
+                });
             } else {
-                res.status(200).send('Login successful'); // Login successful
+                console.log('Login failed: No matching user found'); // Debug log
+                res.status(401).send({ message: 'Invalid credentials' });
             }
         }
     );

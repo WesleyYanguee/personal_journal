@@ -178,14 +178,18 @@ app.delete('/journals', (req, res) => {
 // Login Endpoint
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+    console.log('Login attempt with:', username, password); // Debug log
     connection.query(
         'SELECT * FROM users WHERE username = ? AND password = ?',
         [username, password],
         (err, results) => {
-            if (err || results.length === 0) {
-                res.status(401).send('Invalid credentials');
+            if (err) {
+                console.error('Login error:', err); // Log any SQL error
+                res.status(500).send('Server error');
+            } else if (results.length === 0) {
+                res.status(401).send('Invalid credentials'); // No user found
             } else {
-                res.status(200).send('Login successful');
+                res.status(200).send('Login successful'); // Login successful
             }
         }
     );

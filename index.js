@@ -53,10 +53,10 @@ app.get('/users/:id', (req, res) => {
 
 // Create a new user
 app.post('/users', (req, res) => {
-    const { fname, lname, username, password, avatar } = req.body;
+    const { fname, lname, username, password } = req.body;
     connection.query(
-        'INSERT INTO users (fname, lname, username, password, avatar) VALUES (?, ?, ?, ?, ?)',
-        [fname, lname, username, password, avatar],
+        'INSERT INTO users (fname, lname, username, password) VALUES (?, ?, ?, ?)',
+        [fname, lname, username, password],
         (err, results) => {
             if (err) {
                 res.status(500).send('Error creating user.');
@@ -69,10 +69,10 @@ app.post('/users', (req, res) => {
 
 // Update a user
 app.put('/users', (req, res) => {
-    const { id, fname, lname, username, password, avatar } = req.body;
+    const { id, fname, lname, username, password } = req.body;
     connection.query(
-        'UPDATE users SET fname = ?, lname = ?, username = ?, password = ?, avatar = ? WHERE id = ?',
-        [fname, lname, username, password, avatar, id],
+        'UPDATE users SET fname = ?, lname = ?, username = ?, password = ? WHERE id = ?',
+        [fname, lname, username, password, id],
         (err) => {
             if (err) {
                 res.status(500).send('Error updating user.');
@@ -162,6 +162,22 @@ app.delete('/journals', (req, res) => {
             res.send('Journal deleted successfully.');
         }
     });
+});
+
+// Login Endpoint
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    connection.query(
+        'SELECT * FROM users WHERE username = ? AND password = ?',
+        [username, password],
+        (err, results) => {
+            if (err || results.length === 0) {
+                res.status(401).send('Invalid credentials');
+            } else {
+                res.status(200).send('Login successful');
+            }
+        }
+    );
 });
 
 // Start server

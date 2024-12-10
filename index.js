@@ -70,11 +70,13 @@ app.post('/users', (req, res) => {
 // Update a user
 app.put('/users', (req, res) => {
     const { id, fname, lname, username, password } = req.body;
+    console.log('Update data:', req.body); // Log incoming data
     connection.query(
         'UPDATE users SET fname = ?, lname = ?, username = ?, password = ? WHERE id = ?',
         [fname, lname, username, password, id],
         (err) => {
             if (err) {
+                console.error('Error updating user:', err); // Log error
                 res.status(500).send('Error updating user.');
             } else {
                 res.send('User updated successfully.');
@@ -86,8 +88,10 @@ app.put('/users', (req, res) => {
 // Delete a user
 app.delete('/users', (req, res) => {
     const { id } = req.body;
+    console.log('Delete user ID:', id); // Log the ID being deleted
     connection.query('DELETE FROM users WHERE id = ?', [id], (err) => {
         if (err) {
+            console.error('Error deleting user:', err); // Log error
             res.status(500).send('Error deleting user.');
         } else {
             res.send('User deleted successfully.');
@@ -142,11 +146,13 @@ app.post('/journals', (req, res) => {
 // Update a journal
 app.put('/journals', (req, res) => {
     const { id, userId, title, content, created_at } = req.body;
+    console.log('Update data:', req.body); // Log incoming data for debugging
     connection.query(
         'UPDATE journals SET userId = ?, title = ?, content = ?, created_at = ? WHERE id = ?',
         [userId, title, content, created_at, id],
         (err) => {
             if (err) {
+                console.error('Error updating journal:', err); // Log error
                 res.status(500).send('Error updating journal.');
             } else {
                 res.send('Journal updated successfully.');
@@ -158,8 +164,10 @@ app.put('/journals', (req, res) => {
 // Delete a journal
 app.delete('/journals', (req, res) => {
     const { id } = req.body;
+    console.log('Delete journal ID:', id); // Log the ID being deleted
     connection.query('DELETE FROM journals WHERE id = ?', [id], (err) => {
         if (err) {
+            console.error('Error deleting journal:', err); // Log error
             res.status(500).send('Error deleting journal.');
         } else {
             res.send('Journal deleted successfully.');
